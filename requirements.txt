@@ -1,1 +1,7 @@
+flask
+pandas
+qrcode[pil]
+pillow
+openpyxl
+gunicorn
 
