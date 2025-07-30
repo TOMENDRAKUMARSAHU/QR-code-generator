@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, url_for
 import pandas as pd
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
@@ -6,6 +6,7 @@ import os
 import textwrap
 from zipfile import ZipFile
 import tempfile
+import shutil
 
 app = Flask(__name__)
 
@@ -23,16 +24,27 @@ def generate_qr():
         return "❌ Empty filename", 400
 
     try:
+        # Load Excel
         df = pd.read_excel(file, usecols="B:C", engine="openpyxl")
         df.columns = ['Name', 'Link']
 
+        # Temporary storage
         temp_dir = tempfile.mkdtemp()
         output_folder = os.path.join(temp_dir, "qr_output")
         os.makedirs(output_folder, exist_ok=True)
 
+        # Output for web display
+        static_output = os.path.join("static", "qr_output")
+        if os.path.exists(static_output):
+            shutil.rmtree(static_output)
+        os.makedirs(static_output, exist_ok=True)
+
+        # Font settings
         font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         font_size = 60
         font = ImageFont.truetype(font_path, size=font_size)
+
+        image_names = []
 
         for idx, row in df.iterrows():
             name = str(row["Name"]).strip()
@@ -41,6 +53,7 @@ def generate_qr():
             if pd.isna(link) or not link.startswith("http"):
                 continue
 
+            # Generate QR code
             qr = qrcode.QRCode(
                 version=4,
                 error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -52,11 +65,12 @@ def generate_qr():
             qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
             width, height = qr_img.size
 
+            # Wrap name
             max_text_width = width - 40
             wrapped_lines = []
             for line in textwrap.wrap(name, width=30):
                 while font.getlength(line) > max_text_width:
-                    line = textwrap.wrap(line, width=len(line)//2)[0]
+                    line = textwrap.wrap(line, width=len(line) // 2)[0]
                 wrapped_lines.append(line)
 
             line_height = font.getbbox("A")[3] - font.getbbox("A")[1] + 10
@@ -74,15 +88,23 @@ def generate_qr():
                 draw.text((x_text, y_text), line, fill="black", font=font)
                 y_text += line_height
 
+            # Save image
             safe_name = "".join(c if c.isalnum() else "_" for c in name)
-            combined_img.save(os.path.join(output_folder, f"{safe_name}.png"))
+            file_name = f"{safe_name}.png"
+            save_path = os.path.join(static_output, file_name)
+            combined_img.save(save_path)
+            image_names.append(file_name)
 
-        zip_path = os.path.join(temp_dir, "qr_codes.zip")
-        with ZipFile(zip_path, "w") as zipf:
-            for file in os.listdir(output_folder):
-                zipf.write(os.path.join(output_folder, file), arcname=file)
+        # Create ZIP
+        zip_static_path = os.path.join("static", "qr_codes.zip")
+        with ZipFile(zip_static_path, "w") as zipf:
+            for img_name in image_names:
+                zipf.write(os.path.join(static_output, img_name), arcname=img_name)
 
-        return send_file(zip_path, as_attachment=True)
+        return render_template("index.html", images=image_names)
 
     except Exception as e:
         return f"❌ Error: {str(e)}", 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
