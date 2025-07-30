@@ -2,12 +2,89 @@
 <html>
 <head>
     <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 30px;
+            margin: auto;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        input[type="submit"] {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        .qr-gallery {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .qr-gallery img {
+            width: 200px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .download-link {
+            display: block;
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-    <h2>Upload Excel File (Name + Link)</h2>
+
+    <h1>Welcome to QR Code Generator</h1>
+    <p>Kindly upload your Excel file below (Name in Column B, Link in Column C):</p>
+
     <form action="/generate" method="post" enctype="multipart/form-data">
         <input type="file" name="file" required>
-        <input type="submit" value="Generate QR Codes">
+        <br>
+        <input type="submit" value="Generate QR ZIP">
     </form>
+
+    {% if images %}
+    <h2>Generated QR Codes</h2>
+    <div class="qr-gallery">
+        {% for img in images %}
+            <img src="{{ url_for('static', filename='qr_output/' + img) }}" alt="QR Code">
+        {% endfor %}
+    </div>
+    <a class="download-link" href="{{ url_for('static', filename='qr_codes.zip') }}" download>⬇️ Download All as ZIP</a>
+    {% endif %}
+
 </body>
 </html>
