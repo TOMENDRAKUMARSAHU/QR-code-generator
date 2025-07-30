@@ -1,1 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Generator</title>
+</head>
+<body>
+    <h2>Upload Excel File (Name in Column B, Link in Column C)</h2>
+    <form method="POST" action="/generate" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br><br>
+        <button type="submit">Generate QR ZIP</button>
+    </form>
+</body>
+</html>
 
