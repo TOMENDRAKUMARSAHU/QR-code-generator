@@ -1,85 +1,80 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>QR Code Generator</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #e30613;
-            font-family: Arial, sans-serif;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-        }
-        h1 {
-            font-size: 48px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-        form {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            color: black;
-        }
-        input[type="file"] {
-            margin-bottom: 20px;
-        }
-        input[type="submit"] {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #e30613;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .gallery {
-            margin-top: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .gallery img {
-            width: 250px;
-            height: auto;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        a.download-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 25px;
-            background-color: white;
-            color: #e30613;
-            font-weight: bold;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-    </style>
+  <title>AM/NS QR Code Generator</title>
+  <style>
+    body {
+      background-color: #d32f2f;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 30px;
+      font-size: 36px;
+      font-weight: bold;
+    }
+    form {
+      background-color: white;
+      color: black;
+      padding: 20px;
+      border-radius: 15px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .field-group {
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      margin: 5px;
+      width: 300px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      font-size: 16px;
+      background-color: #c62828;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #fileInputs {
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
-    <h1>AM/NS INDIA</h1>
-    
-    <form action="/generate" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".xlsx,.xls" required><br>
-        <input type="submit" value="Generate QR Codes">
-    </form>
+  <h1>AM/NS INDIA</h1>
+  <h2>Welcome to QR Code Generator</h2>
+  <p>Kindly enter the Name and Shared Link below:</p>
 
-    {% if images %}
-    <a class="download-btn" href="{{ url_for('static', filename='qr_codes.zip') }}">Download All QR Codes</a>
-    <div class="gallery">
-        {% for image in images %}
-            <img src="{{ url_for('static', filename='qr_output/' ~ image) }}" alt="{{ image }}">
-        {% endfor %}
+  <form method="POST" action="/generate">
+    <div id="fileInputs">
+      <div class="field-group">
+        <input type="text" name="name[]" placeholder="File Name" required>
+        <input type="text" name="link[]" placeholder="Shareable Link" required>
+      </div>
     </div>
-    {% endif %}
+    <button type="button" onclick="addFields()">➕ Add File</button><br>
+    <button type="submit">Generate QR Codes</button>
+  </form>
+
+  <script>
+    let count = 1;
+    function addFields() {
+      if (count >= 10) return alert("Maximum 10 files allowed");
+      const div = document.createElement('div');
+      div.className = 'field-group';
+      div.innerHTML = `
+        <input type="text" name="name[]" placeholder="File Name" required>
+        <input type="text" name="link[]" placeholder="Shareable Link" required>
+      `;
+      document.getElementById('fileInputs').appendChild(div);
+      count++;
+    }
+  </script>
 </body>
 </html>
