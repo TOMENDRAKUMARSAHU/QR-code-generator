@@ -1,4 +1,3 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,6 +43,15 @@
     #fileInputs {
       text-align: left;
     }
+    .remove-btn {
+      background-color: #9e1b1b;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-left: 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -55,31 +63,38 @@
     <div id="fileInputs">
       <h3>Name and Shared Link</h3>
       <div class="field-group">
-        <input type="text" name="name[]" placeholder="File Name">
-        <input type="text" name="link[]" placeholder="Shareable Link">
+        <input type="text" name="name[]" placeholder="File Name" required>
+        <input type="text" name="link[]" placeholder="Shareable Link" required>
       </div>
     </div>
 
     <button type="button" onclick="addFields()">➕ Add File</button>
     <hr>
     <p><strong>Or Upload Excel File:</strong></p>
-  <input type="file" name="excel_file" accept=".xlsx" style="background: white; color: black;"><br><br>
+    <input type="file" name="excel_file" accept=".xlsx" style="background: white; color: black;"><br><br>
 
-  <button type="submit">Generate QR Codes</button>
-</form>
+    <button type="submit">Generate QR Codes</button>
+  </form>
 
   <script>
     let count = 1;
     function addFields() {
       if (count >= 10) return alert("Maximum 10 files allowed");
+
       const div = document.createElement('div');
       div.className = 'field-group';
       div.innerHTML = `
-        <input type="text" name="name[]" placeholder="File Name">
-        <input type="text" name="link[]" placeholder="Shareable Link">
+        <input type="text" name="name[]" placeholder="File Name" required>
+        <input type="text" name="link[]" placeholder="Shareable Link" required>
+        <button type="button" class="remove-btn" onclick="removeField(this)">❌ Remove</button>
       `;
       document.getElementById('fileInputs').appendChild(div);
       count++;
+    }
+
+    function removeField(button) {
+      button.parentElement.remove();
+      count--;
     }
   </script>
 </body>
