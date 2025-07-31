@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AM/NS QR Code Generator</title>
+  <title>AM/NS INDIA - QR Code Generator</title>
   <style>
     body {
       background-color: #d32f2f;
@@ -11,8 +11,8 @@
       text-align: center;
     }
     h1 {
-      margin-top: 30px;
       font-size: 36px;
+      margin-top: 30px;
       font-weight: bold;
     }
     form {
@@ -26,7 +26,7 @@
     .field-group {
       margin-bottom: 10px;
     }
-    input[type="text"] {
+    input[type="text"], input[type="file"] {
       padding: 8px;
       margin: 5px;
       width: 300px;
@@ -49,16 +49,21 @@
 <body>
   <h1>AM/NS INDIA</h1>
   <h2>Welcome to QR Code Generator</h2>
-  <p>Kindly enter the Name and Shared Link below:</p>
+  <p>👉 You can manually enter Name + Link OR upload an Excel file</p>
 
-  <form method="POST" action="/generate">
+  <form method="POST" action="/generate" enctype="multipart/form-data">
     <div id="fileInputs">
+      <h3>Name and Shared Link</h3>
       <div class="field-group">
-        <input type="text" name="name[]" placeholder="File Name" required>
-        <input type="text" name="link[]" placeholder="Shareable Link" required>
+        <input type="text" name="name[]" placeholder="File Name">
+        <input type="text" name="link[]" placeholder="Shareable Link">
       </div>
     </div>
-    <button type="button" onclick="addFields()">➕ Add File</button><br>
+
+    <button type="button" onclick="addFields()">➕ Add File</button>
+    <hr>
+    <p><strong>Or Upload Excel File:</strong></p>
+    <input type="file" name="excel_file" accept=".xlsx"><br><br>
     <button type="submit">Generate QR Codes</button>
   </form>
 
@@ -69,8 +74,8 @@
       const div = document.createElement('div');
       div.className = 'field-group';
       div.innerHTML = `
-        <input type="text" name="name[]" placeholder="File Name" required>
-        <input type="text" name="link[]" placeholder="Shareable Link" required>
+        <input type="text" name="name[]" placeholder="File Name">
+        <input type="text" name="link[]" placeholder="Shareable Link">
       `;
       document.getElementById('fileInputs').appendChild(div);
       count++;
