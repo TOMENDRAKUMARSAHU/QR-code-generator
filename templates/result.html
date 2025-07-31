@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Code Results - AM/NS INDIA</title>
+  <style>
+    body {
+      background-color: #d32f2f;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 30px;
+    }
+    .qr-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .qr-box {
+      background: white;
+      color: black;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    img {
+      width: 250px;
+      height: auto;
+    }
+    a.download-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #c62828;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>✅ QR Codes Generated Successfully</h1>
+  <p>👇 Scroll to view all QR codes. You can also download them as a ZIP file.</p>
+
+  <div class="qr-grid">
+    {% for image in images %}
+      <div class="qr-box">
+        <img src="{{ image }}" alt="QR Code">
+      </div>
+    {% endfor %}
+  </div>
+
+  <a href="{{ zip_file }}" class="download-btn" download>⬇️ Download All (ZIP)</a>
+</body>
+</html>
